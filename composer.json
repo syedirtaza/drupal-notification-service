@@ -1,5 +1,5 @@
 {
-    "name": "example/drupal-notification-service",
+    "name": "syedirtaza/drupal-notification-service",
     "description": "Reusable Drupal 11 notification service exposing email delivery APIs for other applications.",
     "type": "project",
     "license": "MIT",
