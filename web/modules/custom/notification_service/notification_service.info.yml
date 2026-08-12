@@ -1,0 +1,5 @@
+name: Notification Service
+type: module
+description: Provides reusable notification APIs, starting with email delivery.
+package: Notification
+core_version_requirement: ^11

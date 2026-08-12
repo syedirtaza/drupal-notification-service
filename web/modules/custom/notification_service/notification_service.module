@@ -1,0 +1,19 @@
+<?php
+
+/**
+ * @file
+ * Mail hooks for notification_service.
+ */
+
+/**
+ * Implements hook_mail().
+ */
+function notification_service_mail($key, &$message, $params): void {
+  if ($key !== 'generic_email') {
+    return;
+  }
+
+  $message['from'] = $params['from'] ?? NULL;
+  $message['subject'] = $params['subject'];
+  $message['body'][] = $params['body'];
+}

@@ -1,0 +1,108 @@
+openapi: 3.0.3
+info:
+  title: Drupal Notification Service API
+  version: 1.0.0
+  description: Reusable Drupal 11 notification API, initially focused on email delivery.
+  license:
+    name: MIT
+servers:
+  - url: http://127.0.0.1:8090
+paths:
+  /api/notifications/health:
+    get:
+      operationId: getNotificationHealth
+      summary: Check service health and available capabilities.
+      security: []
+      responses:
+        '200':
+          description: Service is available.
+  /api/notifications/email:
+    post:
+      operationId: sendEmailNotification
+      summary: Send one email notification.
+      security:
+        - notificationKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailNotificationRequest'
+      responses:
+        '202':
+          description: Email accepted for delivery.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationAccepted'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+components:
+  securitySchemes:
+    notificationKey:
+      type: apiKey
+      in: header
+      name: X-Notification-Key
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ValidationError:
+      description: Invalid request payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    EmailNotificationRequest:
+      type: object
+      required: [to, subject, body]
+      properties:
+        to:
+          type: string
+          format: email
+        subject:
+          type: string
+        body:
+          type: string
+          description: Plain text body for the first email transport.
+        replyTo:
+          type: string
+          format: email
+        metadata:
+          type: object
+          additionalProperties: true
+    NotificationAccepted:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          example: email
+        to:
+          type: string
+          format: email
+        subject:
+          type: string
+        status:
+          type: string
+          enum: [accepted, failed]
+        metadata:
+          type: object
+          additionalProperties: true
+        createdAt:
+          type: integer
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string

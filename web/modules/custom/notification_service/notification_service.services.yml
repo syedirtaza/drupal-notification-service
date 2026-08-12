@@ -1,0 +1,15 @@
+services:
+  notification_service.email:
+    class: Drupal\notification_service\Services\EmailNotificationService
+    arguments:
+      - '@plugin.manager.mail'
+      - '@language_manager'
+      - '@state'
+      - '@datetime.time'
+      - '@settings'
+
+  notification_service.cors_subscriber:
+    class: Drupal\notification_service\EventSubscriber\CorsSubscriber
+    arguments: ['@settings']
+    tags:
+      - { name: event_subscriber }

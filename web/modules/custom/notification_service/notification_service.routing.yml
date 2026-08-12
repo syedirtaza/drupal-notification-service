@@ -1,0 +1,31 @@
+notification_service.health:
+  path: '/api/notifications/health'
+  defaults:
+    _controller: '\Drupal\notification_service\Controller\NotificationApiController::health'
+  requirements:
+    _access: 'TRUE'
+  methods: [GET]
+
+notification_service.email:
+  path: '/api/notifications/email'
+  defaults:
+    _controller: '\Drupal\notification_service\Controller\NotificationApiController::sendEmail'
+  requirements:
+    _access: 'TRUE'
+  methods: [POST]
+
+notification_service.swagger:
+  path: '/api/docs'
+  defaults:
+    _controller: '\Drupal\notification_service\Controller\DocsController::swagger'
+  requirements:
+    _access: 'TRUE'
+  methods: [GET]
+
+notification_service.openapi:
+  path: '/api/docs/openapi.yml'
+  defaults:
+    _controller: '\Drupal\notification_service\Controller\DocsController::openApi'
+  requirements:
+    _access: 'TRUE'
+  methods: [GET]
