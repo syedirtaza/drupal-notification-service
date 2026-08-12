@@ -4,9 +4,15 @@ Reusable Drupal 11 notification service intended to live in its own public repos
 
 ## Architecture
 
+This repository intentionally tracks only the reusable Drupal project definition and custom notification module. Composer and Drupal generate the full runtime after install, so GitHub will not contain `vendor/`, Drupal core, local settings, SQLite databases, or uploaded files.
+
+Tracked source layout:
+
 ```text
 notification-service/
   composer.json
+  composer.lock
+  .env.example
   web/modules/custom/notification_service/
     notification_service.info.yml
     notification_service.routing.yml
@@ -17,6 +23,18 @@ notification-service/
     src/Controller/DocsController.php
     src/EventSubscriber/CorsSubscriber.php
     src/Services/EmailNotificationService.php
+```
+
+Generated after `composer install` and Drupal installation:
+
+```text
+notification-service/vendor/
+notification-service/web/core/
+notification-service/web/index.php
+notification-service/web/.ht.router.php
+notification-service/web/sites/default/settings.php
+notification-service/web/default/files/.ht.sqlite
+notification-service/web/sites/default/files/
 ```
 
 ## Responsibilities
@@ -49,6 +67,38 @@ OpenAPI YAML: http://127.0.0.1:8090/api/docs/openapi.yml
 ```
 
 Use the `Authorize` button in Swagger and enter the shared notification API key.
+
+## Install From GitHub
+
+Prerequisites:
+
+- PHP 8.3 or newer for Drupal 11.
+- PHP extensions required by Drupal, including `curl`, `fileinfo`, `gd`, `intl`, `mbstring`, `openssl`, `pdo_sqlite`, `sodium`, and `zip`.
+- Composer 2.x.
+
+From a fresh clone, install dependencies. The command below uses the workspace portable PHP runtime; use `composer install` if Composer and PHP are globally available.
+
+```powershell
+Set-Location C:\xampp\htdocs\drupal\notification-service
+..\.tools\php-8.5\php.exe ..\.tools\composer.phar install
+```
+
+Install Drupal with SQLite for local development and enable the custom module:
+
+```powershell
+..\.tools\php-8.5\php.exe vendor\bin\drush.php site:install minimal --db-url=sqlite://sites/default/files/.ht.sqlite --site-name="Drupal Notification Service" --account-name=admin --account-pass=AdminPassword123! -y
+..\.tools\php-8.5\php.exe vendor\bin\drush.php en notification_service -y
+..\.tools\php-8.5\php.exe vendor\bin\drush.php cr
+```
+
+Start the local API server:
+
+```powershell
+Set-Location C:\xampp\htdocs\drupal\notification-service\web
+..\..\.tools\php-8.5\php.exe -S 127.0.0.1:8090 .ht.router.php
+```
+
+Open `http://127.0.0.1:8090/api/notifications/health` to verify the service is running.
 
 ## Configuration
 
